@@ -2,3 +2,14 @@ img{
     height: 150px;
     width: 250px;
 }
+
+p a{
+    color:white;
+}
+
+.row{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+ 
