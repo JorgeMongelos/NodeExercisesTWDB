@@ -12,6 +12,10 @@ var request = require("request");
 var campGrounds = [
     {name:"Tiger Musky", image:"http://tigermuskyresort.com/wp-content/gallery/tigermusky/8tiger-musky-cabin.jpg" },
     {name:"Shady Nook", image:"https://img1.wsimg.com/isteam/ip/2974abf5-b960-408d-a068-84d1b44e6734/acf70465-07bc-463f-80ad-5731fd2f54e3.JPG/:/rs=w:400,h:500,cg:true,m/cr=w:800,h:500,a:cc" },
+    {name:"Sisko's Pine Point", image:"https://siskosresort.com/wp-content/uploads/2019/11/eaglesfrommark.jpg" },{name:"Tiger Musky", image:"http://tigermuskyresort.com/wp-content/gallery/tigermusky/8tiger-musky-cabin.jpg" },
+    {name:"Shady Nook", image:"https://img1.wsimg.com/isteam/ip/2974abf5-b960-408d-a068-84d1b44e6734/acf70465-07bc-463f-80ad-5731fd2f54e3.JPG/:/rs=w:400,h:500,cg:true,m/cr=w:800,h:500,a:cc" },
+    {name:"Sisko's Pine Point", image:"https://siskosresort.com/wp-content/uploads/2019/11/eaglesfrommark.jpg" },{name:"Tiger Musky", image:"http://tigermuskyresort.com/wp-content/gallery/tigermusky/8tiger-musky-cabin.jpg" },
+    {name:"Shady Nook", image:"https://img1.wsimg.com/isteam/ip/2974abf5-b960-408d-a068-84d1b44e6734/acf70465-07bc-463f-80ad-5731fd2f54e3.JPG/:/rs=w:400,h:500,cg:true,m/cr=w:800,h:500,a:cc" },
     {name:"Sisko's Pine Point", image:"https://siskosresort.com/wp-content/uploads/2019/11/eaglesfrommark.jpg" }
 ];
 
