@@ -21,7 +21,8 @@ mongoose.connect(mongodbURL, {useNewUrlParser: true, useUnifiedTopology: true});
 *****************************************************/
 var campgroundSchema = mongoose.Schema({
     name: String,
-    image: String
+    image: String,
+    description: String
 });
 
 //create campground model
@@ -71,13 +72,26 @@ app.get("/campgrounds", function(req, res){
         if(err){
             console.log(err);
         }else{
-            res.render("campgrounds", {campGrounds: campGrounds});  
+            res.render("index", {campGrounds: campGrounds});  
         }
     });
 });
 
 app.get("/campgrounds/new", function(req, res){
     res.render("new");
+});
+
+app.get("/campgrounds/:id", function(req, res){
+
+    //Find the campground with provided ID
+    Campground.findById(req.params.id, function(err, foundCampGround){
+        if(err){
+            console.log(err);
+        }else{
+            //render show template with that campground
+            res.render("show", {campgrounds: foundCampGround});
+        }
+    });
 });
 
 /******************** 
@@ -88,8 +102,9 @@ app.post("/campgrounds", function(req, res){
     //get data from form
     var name = req.body.name;
     var image = req.body.image;
+    var description = req.body.description;
     //add to campgrounds array
-    var newCampGround = {name: name, image:image};
+    var newCampGround = {name: name, image:image, description:description};
     Campground.create(newCampGround,
     function(err, camp){
         if(err){
