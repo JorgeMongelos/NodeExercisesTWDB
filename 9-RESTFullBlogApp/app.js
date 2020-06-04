@@ -2,10 +2,11 @@
                                                                  Export libraries
 ************************************************************************************************************************************************************/ 
 var bodyParser  = require("body-parser"),
-    express     = require("express"),
-    mongoose    = require("mongoose"),
-    request     = require("request"),
-    app         = express();
+methodOverride  = require("method-override"),
+express         = require("express"),
+mongoose        = require("mongoose"),
+request         = require("request"),
+app             = express();
 /***********************************************************************************************************************************************************
                                                                  APP CONFIG
 ************************************************************************************************************************************************************/
@@ -13,6 +14,7 @@ var mongodbURL = 'mongodb://localhost:27017/restful_blog_app';//db URL
 mongoose.connect(mongodbURL, {useNewUrlParser: true, useUnifiedTopology: true});//db connection
 app.set("view engine", "ejs"); //makes express look for .ejs files
 app.use(bodyParser.urlencoded({extended: true}));// turns string into objects
+app.use(methodOverride("_method"));
 app.use(express.static("public")); //serves css files
 
 /***********************************************************************************************************************************************************
@@ -69,6 +71,42 @@ app.post("/blogs", function(req, res){
             res.redirect("/blogs");
         }
     });
+});
+
+//SHOW route
+app.get("/blogs/:id", function(req, res){
+    Blog.findById(req.params.id, function(err, foundBlog){
+        if(err){
+            res.redirect("/blogs");
+        } else {
+            res.render("show", {blog: foundBlog});
+        }
+    });
+});
+
+//EDIT rounte
+app.get("/blogs/:id/edit", function(req, res){
+    Blog.findById(req.params.id, function(err, foundBlog){
+        if(err){
+            res.redirect("/blogs");
+        }else{
+            res.render("edit", {blog: foundBlog});
+        }
+    });
+});
+//UPDATE rpute
+app.put("/blogs:id", function(req, res){
+    var id = req.params.id;
+    var body = req.body.blog;
+    Blog.findByIdAndUpdate(id, body, function(err, updatedBlog){
+        if(err){
+            res.redirect("/blogs");
+        }else{
+            res.render("/blogs/" + id );
+        }
+
+    });
+
 });
 
 /**************************************************************************************************************************************************************
