@@ -1,21 +1,24 @@
 /***********************************************************************************************************************************************************
                                                                  Export libraries
 ************************************************************************************************************************************************************/ 
-var bodyParser  = require("body-parser"),
-methodOverride  = require("method-override"),
-express         = require("express"),
-mongoose        = require("mongoose"),
-request         = require("request"),
-app             = express();
+var bodyParser      = require("body-parser"),
+methodOverride      = require("method-override"),
+expressSanitizer    = require("express-sanitizer"),
+express             = require("express"),
+mongoose            = require("mongoose"),
+request             = require("request"),
+app                 = express();
 /***********************************************************************************************************************************************************
                                                                  APP CONFIG
 ************************************************************************************************************************************************************/
 var mongodbURL = 'mongodb://localhost:27017/restful_blog_app';//db URL
-mongoose.connect(mongodbURL, {useNewUrlParser: true, useUnifiedTopology: true});//db connection
+mongoose.connect(mongodbURL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});//db connection
 app.set("view engine", "ejs"); //makes express look for .ejs files
 app.use(bodyParser.urlencoded({extended: true}));// turns string into objects
-app.use(methodOverride("_method"));
+app.use(expressSanitizer());//sanitizes inputs
+app.use(methodOverride("_method"));//Overrides post method to use delete and put methods
 app.use(express.static("public")); //serves css files
+
 
 /***********************************************************************************************************************************************************
                                                              create database schema
@@ -64,6 +67,9 @@ app.get("/blogs/new", function(req, res){
 //CREATE route
 app.post("/blogs", function(req, res){
 
+    //sanitize input
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+
     Blog.create(req.body.blog, function(err, newBlog){
         if(err){
             res.render("new");
@@ -84,7 +90,7 @@ app.get("/blogs/:id", function(req, res){
     });
 });
 
-//EDIT rounte
+//EDIT route
 app.get("/blogs/:id/edit", function(req, res){
     Blog.findById(req.params.id, function(err, foundBlog){
         if(err){
@@ -94,15 +100,33 @@ app.get("/blogs/:id/edit", function(req, res){
         }
     });
 });
-//UPDATE rpute
-app.put("/blogs:id", function(req, res){
+//UPDATE route
+app.put("/blogs/:id", function(req, res){
     var id = req.params.id;
     var body = req.body.blog;
+
+    //sanitize input
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+    
     Blog.findByIdAndUpdate(id, body, function(err, updatedBlog){
         if(err){
             res.redirect("/blogs");
         }else{
-            res.render("/blogs/" + id );
+            res.redirect("/blogs/" + id);
+        }
+
+    });
+
+});
+
+//DELETE route
+app.delete("/blogs/:id", function(req, res){
+    var id = req.params.id;
+    Blog.findByIdAndRemove(id, function(err, updatedBlog){
+        if(err){
+            res.redirect("/blogs");
+        }else{
+            res.redirect("/blogs/" + id);
         }
 
     });
