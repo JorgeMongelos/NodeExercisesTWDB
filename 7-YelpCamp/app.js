@@ -8,6 +8,8 @@ var expressSanitizer    = require("express-sanitizer"),
     request             = require("request"),
     express             = require("express"),
     app                 = express();
+    seedDB              = require("./seed");
+//seedDB();
 /***********************************************************************************************************************************************************
                                                                  APP CONFIG
 ************************************************************************************************************************************************************/
@@ -22,8 +24,8 @@ app.use(express.static("public")); //serves css files
 /*****************************************************************************************************************************************************************
                                                                     Import Schemas
 ******************************************************************************************************************************************************************/
-var Campground = require("./modules/campground");
-var Comment = require("./modules/comment");
+var Campground = require("./models/campground");
+var Comment = require("./models/comment");
 
 
 
@@ -45,6 +47,9 @@ var Comment = require("./modules/comment");
 app.get("/", function(req, res){
     res.render("landing");
 });
+/*************************************************************************************************************************************************************
+                                                           INDEX - show all campgrounds
+**************************************************************************************************************************************************************/
 
 app.get("/campgrounds", function(req, res){
     Campground.find({},function(err, campGrounds){
@@ -56,26 +61,9 @@ app.get("/campgrounds", function(req, res){
     });
 });
 
-app.get("/campgrounds/new", function(req, res){
-    res.render("new");
-});
-
-app.get("/campgrounds/:id", function(req, res){
-
-    //Find the campground with provided ID
-    Campground.findById(req.params.id, function(err, foundCampGround){
-        if(err){
-            console.log(err);
-        }else{
-            //render show template with that campground
-            res.render("show", {campgrounds: foundCampGround});
-        }
-    });
-});
-
-/******************** 
-      POST routes
-**********************/
+/*************************************************************************************************************************************************************
+                                                           CREATE - add new campground to DB
+**************************************************************************************************************************************************************/
 app.post("/campgrounds", function(req, res){
 
     //get data from form
@@ -95,7 +83,29 @@ app.post("/campgrounds", function(req, res){
     });
 });
 
+/*************************************************************************************************************************************************************
+                                                          NEW - show form to create a new campground
+**************************************************************************************************************************************************************/
+app.get("/campgrounds/new", function(req, res){
+    res.render("new");
+});
 
+/*************************************************************************************************************************************************************
+                                                           SHOW - shows more info about one campground
+**************************************************************************************************************************************************************/
+app.get("/campgrounds/:id", function(req, res){
+
+    //Find the campground with provided ID
+    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampGround){
+        if(err){
+            console.log(err);
+        }else{
+            console.log(foundCampGround);
+            //render show template with that campground
+            res.render("show", {campgrounds: foundCampGround});
+        }
+    });
+});
 
 /**************************************************************************************************************************************************************
                                                         init port to listen for app
